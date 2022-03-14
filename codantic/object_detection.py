@@ -1,12 +1,9 @@
-from collections import defaultdict
-from turtle import right, width
 from typing import *
 
 from pydantic import BaseModel, Field
+from .base import Annotation, CocoDataset
 
-from .common import ExtensibleModel
-
-__all__ = ["CocoDataset", "Image", "ODAnnotation", "Category"]
+__all__ = ["BBox", "ODAnnotation", "ODCocoDataset"]
 
 
 class BBox(BaseModel):
@@ -90,27 +87,9 @@ class BBox(BaseModel):
         return BBox(left=left, top=top, right=right, bottom=bottom)
 
 
-class DatasetInfo(ExtensibleModel):
-    year: str = None
-    version: str = None
-    description: str = None
-    contributor: str = None
-    url: str = None
-    date_created: str = None
-
-
-class ODAnnotation(ExtensibleModel):
-    annotation_id: int = Field(None, alias="id")
-    image_id: int = 0
-    category_id: int = 0
-
+class ODAnnotation(Annotation):
+    bbox: Tuple[float, float, float, float]
     area: float = 0
-
-    bbox: Sequence[float] = tuple()
-    keypoints: Sequence[float] = []
-    landmarks: Sequence[Tuple[float, float]] = []
-
-    attributes: Dict[str, Any] = {}
     score: float = 1
 
     def get_bbox(self) -> BBox:
@@ -118,46 +97,5 @@ class ODAnnotation(ExtensibleModel):
         return BBox(left=x_min, top=y_min, right=x_min + width, bottom=y_min + height)
 
 
-class Image(ExtensibleModel):
-    image_id: int = Field(alias="id")
-    file_name: str = None
-    width: int = None
-    height: int = None
-    license: str = None
-    flickr_url: str = None
-    coco_url: str = None
-    date_captured: str = None
-    attributes: Dict[str, Any] = Field(default_factory=dict)
-
-
-class Category(ExtensibleModel):
-    category_id: int = Field(alias="id")
-    name: str = None
-    super_category: str = Field(default=None, alias="supercategory")
-
-
-class CocoDataset(ExtensibleModel):
-    info: DatasetInfo = DatasetInfo()
-    images: List[Image] = []
+class ODCocoDataset(CocoDataset):
     annotations: List[ODAnnotation] = []
-    categories: List[Category] = []
-
-    def get_images_info(self) -> Dict[int, Image]:
-        images = {}
-        for image_info in self.images:
-            images[image_info.image_id] = image_info
-
-        return images
-
-    def get_annotation_groups(
-        self, category_id: Optional[int] = None
-    ) -> Dict[int, List[ODAnnotation]]:
-        annotation_groups = defaultdict(list)
-        for annotation in self.annotations:
-            if category_id is not None:
-                if annotation.category_id == category_id:
-                    annotation_groups[annotation.image_id].append(annotation)
-            else:
-                annotation_groups[annotation.image_id].append(annotation)
-
-        return dict(annotation_groups)
