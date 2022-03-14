@@ -1,4 +1,7 @@
 /env
+/notebook
+/dist
+/build
 *.egg-info
 .eggs
 .ipynb_checkpoints
