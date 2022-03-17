@@ -23,7 +23,7 @@ for path in glob("requirements.*.txt"):
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-__VERSION__ = "0.0.1"
+__VERSION__ = "0.0.2"
 __DESCRIPTION__ = "CocoDataset reader"
 
 packages = setuptools.find_packages()
