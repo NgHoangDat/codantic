@@ -1,12 +1,12 @@
 from collections import defaultdict
 from typing import *
 
-from pydantic import BaseModel, Field
+from mousse import Dataclass, Field
 
 __all__ = ["CocoDataset", "Image", "Annotation", "Category"]
 
 
-class Info(BaseModel):
+class Info(Dataclass):
     year: str = None
     version: str = None
     description: str = None
@@ -15,23 +15,23 @@ class Info(BaseModel):
     date_created: str = None
 
 
-class License(BaseModel):
-    license_id: int = Field(None, alias="id")
+class License(Dataclass):
+    license_id: int = Field(..., alias="id")
     url: str = None
     name: str = None
 
 
-class Image(BaseModel):
+class Image(Dataclass):
     image_id: int = Field(alias="id")
     file_name: str = None
     width: int = None
     height: int = None
     license_id: int = Field(default=None, alias="license")
     date_captured: str = None
-    attributes: Dict[str, Any] = Field(default_factory=dict)
+    attributes: Dict[str, Any] = {}
 
 
-class Annotation(BaseModel):
+class Annotation(Dataclass):
     annotation_id: int = Field(None, alias="id")
     image_id: int = None
     category_id: int = None
@@ -39,13 +39,13 @@ class Annotation(BaseModel):
     attributes: Dict[str, Any] = {}
 
 
-class Category(BaseModel):
+class Category(Dataclass):
     category_id: int = Field(alias="id")
     name: str = None
     super_category: str = Field(default=None, alias="supercategory")
 
 
-class CocoDataset(BaseModel):
+class CocoDataset(Dataclass):
     info: Info = Info()
     licenses: List[License] = []
     images: List[Image] = []

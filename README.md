@@ -1,5 +1,5 @@
 
-# Coco format dataset using pydantic
+# Coco format dataset supporter
 
 ## Supported tasks
 
