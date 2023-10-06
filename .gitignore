@@ -2,6 +2,7 @@
 /notebook
 /dist
 /build
+/samples
 *.egg-info
 .eggs
 .ipynb_checkpoints

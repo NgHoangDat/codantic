@@ -1,12 +1,12 @@
 from typing import *
 
-from pydantic import BaseModel, Field
+from mousse import Dataclass
 from .base import Annotation, CocoDataset
 
 __all__ = ["BBox", "ODAnnotation", "ODCocoDataset"]
 
 
-class BBox(BaseModel):
+class BBox(Dataclass):
     left: float
     top: float
     bottom: float
@@ -29,6 +29,9 @@ class BBox(BaseModel):
 
     def ltwh(self, dtype: Type = float):
         return dtype(self.left), dtype(self.top), dtype(self.width), dtype(self.height)
+
+    def __hash__(self) -> int:
+        return id(self)
 
     def __contains__(self, other: "BBox") -> bool:
         return (

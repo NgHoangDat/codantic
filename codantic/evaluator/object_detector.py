@@ -6,6 +6,7 @@ import pandas as pd
 from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval as BaseCOCOEval
 
+from mousse import asdict
 
 from codantic.models import Category
 from codantic.models.object_detection import ODCocoDataset
@@ -27,11 +28,11 @@ class ODCocoEvaluator(BaseCOCOEval):
         align_categories(gold_dataset, pred_dataset)
 
         gold_coco = COCO()
-        gold_coco.dataset = gold_dataset.dict(by_alias=True)
+        gold_coco.dataset = asdict(gold_dataset, by_alias=True)
         gold_coco.createIndex()
 
         pred_coco = COCO()
-        pred_coco.dataset = pred_dataset.dict(by_alias=True)
+        pred_coco.dataset = asdict(pred_dataset, by_alias=True)
         pred_coco.createIndex()
 
         super().__init__(cocoGt=gold_coco, cocoDt=pred_coco, iouType=iou_type.value)
